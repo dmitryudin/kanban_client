@@ -1,4 +1,4 @@
-import 'package:canban/utils/Auth.dart';
+import 'package:canban/utils/Security/Auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -51,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
             IconButton(
               icon: Icon(Icons.logout),
               onPressed: () {
-                Auth().logOut(() {});
+                Auth().logOut();
               },
             )
           ],

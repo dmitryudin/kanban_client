@@ -1,9 +1,10 @@
 import 'dart:convert';
 
 import 'package:canban/controllers/TaskObject.dart';
+import 'package:canban/utils/Security/Auth.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../Network/RestController.dart';
+import '/utils/Network/RestController.dart';
 
 class TaskColumnObject extends ChangeNotifier {
   List<TaskObject> idea = [];
@@ -50,20 +51,22 @@ class TaskColumnObject extends ChangeNotifier {
 
   void saveState() {
     RestController().sendPostRequest(
-        onComplete: ({required String data}) {},
-        onError: ({required String data}) {},
+        onComplete: ({required String data, required int statusCode}) {},
+        onError: ({required int statusCode}) {},
         controller: 'update',
-        data: this.toJson());
+        data: this.toJson(),
+        accessToken: Auth().accessToken);
   }
 
   void getData() {
     RestController().sendPostRequest(
-        onComplete: ({required String data}) {
+        onComplete: ({required String data, required int statusCode}) {
           fromJson(data);
         },
-        onError: ({required String data}) {},
+        onError: ({required int statusCode}) {},
         controller: 'get',
-        data: "");
+        data: "",
+        accessToken: Auth().accessToken);
   }
 
   void redraw() {

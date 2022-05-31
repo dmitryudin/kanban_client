@@ -1,8 +1,8 @@
-import 'package:canban/utils/Auth.dart';
+import 'package:canban/utils/Security/Auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'Network/RestController.dart';
+import 'utils/Network/RestController.dart';
 
 class RegisterPage extends StatefulWidget {
   RegisterPage({Key? key}) : super(key: key);
@@ -13,6 +13,8 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   String status = '';
+  String login = '';
+  String password = '';
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -46,7 +48,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               //initialValue: dateTime,
                               validator: (value) {},
                               onChanged: (String value) {
-                                Auth().login = value;
+                                login = value;
                               },
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(),
@@ -63,7 +65,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 //initialValue: dateTime,
                                 validator: (value) {},
                                 onChanged: (String value) {
-                                  Auth().password = value;
+                                  password = value;
                                 },
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(),
@@ -74,17 +76,24 @@ class _RegisterPageState extends State<RegisterPage> {
                         Padding(padding: EdgeInsets.only(top: height * 0.03)),
                         ElevatedButton(
                             onPressed: () {
-                              Auth().register((status) {
-                                this.status = status;
-                                print('status = ${this.status}');
-                                this.setState(() {});
-                              },
-                                  '{"login":"' +
-                                      Auth().login +
-                                      '", "password":"' +
-                                      Auth().password +
-                                      '"}');
-                              Navigator.pop(context);
+                              RestController().sendPostRequest(
+                                  onComplete: (
+                                      {required String data,
+                                      required int statusCode}) {
+                                    if (statusCode == 201)
+                                      Navigator.pop(context);
+                                  },
+                                  onError: ({required int statusCode}) {
+                                    if (statusCode == 409) {
+                                      status = 'Пользователь существует';
+                                    } else {
+                                      status = 'Ошибка $statusCode';
+                                    }
+                                    setState(() {});
+                                  },
+                                  controller: 'register',
+                                  data:
+                                      '{"login":"$login", "password":"$password", "role":"client"}');
                             },
                             child: Text('Зарегистрироваться')),
                         Padding(padding: EdgeInsets.only(top: height * 0.03)),

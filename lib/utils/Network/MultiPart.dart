@@ -77,10 +77,10 @@ class RemoteFileManager {
 
   void deleteFile({url}) {
     RestController().sendPostRequest(
-        onComplete: ({required String data}) {
+        onComplete: ({required String data, required int statusCode}) {
           print('deletedFile' + '$data');
         },
-        onError: ({required String data}) {},
+        onError: ({required int statusCode}) {},
         controller: 'delete_file',
         data: '{"url":"' + url + '"}');
   }

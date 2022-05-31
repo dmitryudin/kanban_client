@@ -1,5 +1,5 @@
 import 'package:canban/RegisterPage.dart';
-import 'package:canban/utils/Auth.dart';
+import 'package:canban/utils/Security/Auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -11,12 +11,13 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  String login = '';
+  String password = '';
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-    String login = '';
-    String password = '';
+
     return Scaffold(
         appBar: AppBar(title: Text('Вход')),
         body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -46,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
                               //initialValue: dateTime,
                               validator: (value) {},
                               onChanged: (String value) {
-                                Auth().login = value;
+                                login = value;
                               },
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(),
@@ -63,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                                 //initialValue: dateTime,
                                 validator: (value) {},
                                 onChanged: (String value) {
-                                  Auth().password = value;
+                                  password = value;
                                 },
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(),
@@ -73,13 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                         Padding(padding: EdgeInsets.only(top: height * 0.03)),
                         ElevatedButton(
                             onPressed: () {
-                              Auth().auth(
-                                  (status) {},
-                                  '{"login":"' +
-                                      Auth().login +
-                                      '", "password":"' +
-                                      Auth().password +
-                                      '"}');
+                              Auth().logIn(login: login, password: password);
                             },
                             child: Text('Войти')),
                         Padding(padding: EdgeInsets.only(top: height * 0.03)),

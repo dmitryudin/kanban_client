@@ -2,20 +2,20 @@ import 'package:canban/Dialogs/EditTaskDialog.dart';
 import 'package:canban/LoginPage.dart';
 import 'package:canban/MyWidgets.dart/ColumnWidget.dart';
 import 'package:canban/SplashScreen.dart';
+import 'package:canban/configuration/NetworkConfiguration.dart';
 import 'package:canban/controllers/TaskObject.dart';
-import 'package:canban/utils/Auth.dart';
+import 'package:canban/utils/Security/Auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'Dialogs/CreateTaskDialog.dart';
 import 'HomePage.dart';
 import 'controllers/TaskColumnObject.dart';
-import 'package:hive_flutter/hive_flutter.dart';
+
 import 'package:url_strategy/url_strategy.dart';
 
 void main() async {
   setPathUrlStrategy();
   runApp(MyApp());
-  await Hive.initFlutter();
 }
 
 class MyApp extends StatefulWidget {
@@ -28,25 +28,20 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   Widget page = SplashScreen();
-  void reload() {
-    if (Auth().isAuth())
-      page = MyHomePage(title: 'kanban');
-    else
-      page = LoginPage();
-    setState(() {});
-  }
 
   _MyAppState() {
     Auth().init(
-        callback: () {
-          print('App reloaded');
-          if (Auth().isAuth())
-            page = MyHomePage(title: 'kanban');
+        callback: ({required bool isAuthFlag}) {
+          if (isAuthFlag)
+            page = MyHomePage(
+              title: '',
+            );
           else
             page = LoginPage();
           setState(() {});
         },
-        reloadFunction: reload);
+        authUrl: NetworkConfiguration().address + '/auth',
+        refreshTokenUrl: NetworkConfiguration().address + '/refresh');
   }
 
   @override
@@ -61,7 +56,6 @@ class _MyAppState extends State<MyApp> {
             primarySwatch: Colors.blue,
           ),
           home: page,
-          initialRoute: '/web',
         ));
   }
 }
